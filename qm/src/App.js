@@ -107,7 +107,7 @@ function App() {
 
   return (
     <div className="App">
-      <div>
+      <div className="wrapper">
         <h1>Search for Session</h1>
 
         {rows.map((item, index) => (
@@ -117,12 +117,17 @@ function App() {
             onRowEdit={(row) => editRow(index, row)}
           />
         ))}
-        <div className="andBtn">
+        <div className="btns-wrapper">
           <button onClick={handleAddOnClick}>And</button>
+
+          <div className="search-btns">
+            <button>
+              <i class="fas fa-search"></i>
+              <span className="search-text">Search</span>
+            </button>
+            <button onClick={handleResetOnClick}>Reset</button>
+          </div>
         </div>
-        <hr />
-        <button>Search</button>
-        <button onClick={handleResetOnClick}>Reset</button>
       </div>
     </div>
   );
@@ -158,22 +163,31 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
 
     onRowEdit(row);
   };
+  const getClassName = (initial, size = "md") => {
+    return initial;
+  };
 
   var checkmark = "\u2715";
   return (
     <div className="row">
-      <span className="deleteBtn" onClick={() => onRowDelete()}>
+      <div className="deleteBtn auto" onClick={() => onRowDelete()}>
         {checkmark}
-      </span>
-      <select onChange={handlePredicateOnChange}>
+      </div>
+      <select
+        className={getClassName("form-control")}
+        onChange={handlePredicateOnChange}
+      >
         {predicate.map((item, index) => (
           <option key={index} value={item.key}>
             {item.name}
           </option>
         ))}
       </select>
-      {selectedOption === "between" && <span> is </span>}
-      <select onChange={handleOparationOnChange}>
+      {selectedOption === "between" && <span>is</span>}
+      <select
+        className={getClassName("form-control")}
+        onChange={handleOparationOnChange}
+      >
         {selectedPredicate.type === "number" &&
           numberOptions.map((item, index) => (
             <option key={index} value={item}>
@@ -190,13 +204,15 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
       {selectedOption === "between" && (
         <>
           <input
+            className="form-control xsm"
             type="number"
             placeholder="0"
             onChange={(e) => null}
             required
           />
-          <span> and </span>
+          <span>and</span>
           <input
+            className="form-control xsm"
             type="number"
             placeholder="0"
             onChange={(e) => null}
@@ -206,6 +222,7 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
       )}
       {selectedOption !== "between" && (
         <input
+          className="form-control md"
           type="text"
           placeholder="website.com"
           onChange={(e) => null}

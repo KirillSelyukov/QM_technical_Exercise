@@ -1,53 +1,70 @@
 .App {
   text-align: center;
   width: 1028px;
+  background: #fbfbfb;
+  width: 100%;
+  height: 100vh;
+}
+
+h1 {
+  font-size: 20px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.wrapper {
+  width: 65%;
+  margin: 0 auto;
+  margin-top: 50px;
 }
 
 .btn {
-  background-color: #1c74af;
+  background-color: #24a7f0;
   color: white;
   padding: 10px 25px;
   font-size: 16px;
   border: none;
   cursor: pointer;
   border-radius: 3px;
-  margin: 10px;
 }
+
+.search-btns {
+  border-top: 1px solid #ced4da;
+  margin-top: 40px;
+}
+
+.search-text {
+  margin-left: 10px;
+}
+
+.btns-wrapper > button {
+  width: 60px;
+  padding: 5px;
+}
+
 .deleteBtn {
   color: black;
-  margin: 1em;
+  display: inline-block;
+  font-size: 14px;
+  margin-right: 15px;
 }
 
 .row {
+  /* display: flex; */
+  /* align-items: left; */
+  text-align: left;
   color: black;
-  padding: 1em 2em;
+  padding: 1em 1em;
   font-size: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-
+  border: 1px solid #ced4da;
   cursor: pointer;
   border-radius: 0.3em;
-  margin: 10px;
+  margin-bottom: 10px;
+  background: #ffffff;
 }
 
 button {
-  /* display: inline-block;
-  border: none;
-  border-radius: 3px;
-  margin: 1em;
-  padding: 1rem 2rem;
-  margin: 0;
-  text-decoration: none;
-  background-color: #1c74af;
-  color: #ffffff;
-
-  font-size: 1rem;
-  cursor: pointer;
-  text-align: center;
-  transition: background 250ms ease-in-out, transform 150ms ease;
-  -webkit-appearance: none;
-  -moz-appearance: none; */
-
-  background-color: #1c74af;
+  background-color: #24a7f0;
   color: white;
   padding: 10px 25px;
   font-size: 16px;
@@ -55,11 +72,16 @@ button {
   cursor: pointer;
   border-radius: 3px;
   margin: 10px;
+  margin-left: 0;
 }
 
 button:hover,
 button:focus {
-  background: #1c74af;
+  background: #24a7f0;
+}
+
+.btns-wrapper {
+  text-align: left;
 }
 
 button:focus {
@@ -69,4 +91,48 @@ button:focus {
 
 button:active {
   transform: scale(0.99);
+}
+
+select {
+  width: 250px;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  padding: 5px;
+  margin-right: 10px;
+}
+
+input {
+  width: 250px;
+  height: 17px;
+  padding: 5px 5px 5px 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+}
+
+.md {
+  width: 33.333333%;
+}
+
+.sm {
+  width: 16.666666%;
+}
+
+.xsm {
+  width: 10.6%;
+}
+
+.lg {
+  width: 50%;
+}
+.auto {
+  width: auto;
+}
+
+span {
+  border: 1px solid #ced4da;
+  padding: 5px 5px 5px 10px;
+  margin: 0 5px;
+  font-size: 14px;
 }
