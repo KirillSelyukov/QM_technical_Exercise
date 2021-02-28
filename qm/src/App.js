@@ -2,77 +2,7 @@ import React from "react";
 
 import "./App.css";
 
-const predicate = [
-  {
-    key: 1,
-    name: "Domain",
-    type: "string",
-    column: "domain",
-  },
-  {
-    key: 2,
-    name: "User Email",
-    type: "string",
-    column: "user_email",
-  },
-  {
-    key: 3,
-    name: "Screen Width",
-    type: "number",
-    column: "screen_width",
-  },
-  {
-    key: 4,
-    name: "Screen Height",
-    type: "number",
-    column: "screen_height",
-  },
-  {
-    key: 5,
-    name: "# of Visit",
-    type: "number",
-    column: "visits",
-  },
-  {
-    key: 6,
-    name: "First Name",
-    type: "string",
-    column: "user_first_name",
-  },
-  {
-    key: 7,
-    name: "Last Name",
-    type: "string",
-    column: "user_last_name",
-  },
-  {
-    key: 8,
-    name: "Page response time (ms)",
-    type: "number",
-    column: "page_response",
-  },
-  {
-    key: 9,
-    name: "Page path",
-    type: "string",
-    column: "path",
-  },
-];
-
-const stringOptions = [
-  { name: "equals", sql: "=" },
-  { name: "contains", sql: "LIKE" },
-  { name: "start with", sql: "LIKE" },
-  { name: "in list", sql: "IN" },
-];
-
-const numberOptions = [
-  { name: "equals", sql: "=" },
-  { name: "between", sql: "BETWEEN" },
-  { name: "greater than", sql: ">" },
-  { name: "less than", sql: "<" },
-  { name: "in list", sql: "IN" },
-];
+import { predicate, stringOptions, numberOptions } from "./models";
 
 function App() {
   const initialRow = {
@@ -133,8 +63,6 @@ function App() {
   };
 
   const editRow = (i, row) => {
-    console.log("row: ", row);
-
     const newRows = [...rows];
     newRows[i] = { ...row };
     setRows(newRows);
@@ -143,30 +71,60 @@ function App() {
   return (
     <div className="App">
       <div className="wrapper">
-        <h1>Search for Session</h1>
-
-        {rows.map((item, index) => (
-          <Row
-            key={index}
-            onRowDelete={() => deletRow(index)}
-            onRowEdit={(row) => editRow(index, row)}
-          />
-        ))}
+        <Header />
+        <Rows onRowDelete={deletRow} onRowEdit={editRow} rows={rows} />
         <div className="btns-wrapper">
           <button onClick={handleAddOnClick}>And</button>
           <div className="search-btns">
-            <button onClick={handleOnSearch}>
-              <i className="fas fa-search"></i>
-              <span className="search-text">Search</span>
-            </button>
-            <button onClick={handleResetOnClick}>Reset</button>
+            <SearchBtn onClick={handleOnSearch} />
+            <ResetBtn onClick={handleResetOnClick} />
           </div>
         </div>
-        <div>result:{result}</div>
+        <Result value={result} />
       </div>
     </div>
   );
 }
+
+export const Header = () => {
+  return <h1>Search for Session</h1>;
+};
+
+export const SearchBtn = ({ onClick }) => {
+  return (
+    <button onClick={onClick}>
+      <i className="fas fa-search"></i>
+      <span className="search-text">Search</span>
+    </button>
+  );
+};
+
+export const ResetBtn = ({ onClick }) => {
+  return <button onClick={onClick}>Reset</button>;
+};
+
+export const Result = ({ value }) => {
+  return (
+    <div className="result">
+      {!value && (
+        <span className="resultPlaceHolder">
+          Your Generated SQL Statement goes here:
+        </span>
+      )}
+      {value}
+    </div>
+  );
+};
+
+export const Rows = ({ rows, onEdit, onDelete }) => {
+  return rows.map((item, index) => (
+    <Row
+      key={index}
+      onRowDelete={() => onDelete(index)}
+      onRowEdit={(row) => onEdit(index, row)}
+    />
+  ));
+};
 
 export const Row = ({ onRowDelete, onRowEdit }) => {
   const [selectedPredicate, setSelectedPredicate] = React.useState(
