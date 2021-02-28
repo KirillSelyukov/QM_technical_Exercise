@@ -4,14 +4,6 @@
 }
 
 .btn {
-  /* background-color: blue;
-  margin: 10px;
-  color: white;
-  border-radius: 3px;
-  border: 0px;
-  height: 48px;
-  padding: 0 30px; */
-  /* box-shadow: 0 3px 5px 2px gray; */
   background-color: #1c74af;
   color: white;
   padding: 10px 25px;
@@ -28,11 +20,12 @@
 
 .row {
   color: black;
-  padding: 10px 25px;
-  font-size: 16px;
-  border: 1px solid black;
+  padding: 1em 2em;
+  font-size: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 0.3em;
   margin: 10px;
 }
 

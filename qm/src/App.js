@@ -109,7 +109,7 @@ function App() {
     <div className="App">
       <div>
         <h1>Search for Session</h1>
-        {/* {renderRows()} */}
+
         {rows.map((item, index) => (
           <Row
             key={index}
