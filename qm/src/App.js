@@ -7,84 +7,120 @@ const predicate = [
     key: 1,
     name: "Domain",
     type: "string",
+    column: "domain",
   },
   {
     key: 2,
     name: "User Email",
     type: "string",
+    column: "user_email",
   },
   {
     key: 3,
     name: "Screen Width",
     type: "number",
+    column: "screen_width",
   },
   {
     key: 4,
     name: "Screen Height",
     type: "number",
+    column: "screen_height",
   },
   {
     key: 5,
     name: "# of Visit",
     type: "number",
+    column: "visits",
   },
   {
     key: 6,
     name: "First Name",
     type: "string",
+    column: "user_first_name",
   },
   {
     key: 7,
     name: "Last Name",
     type: "string",
+    column: "user_last_name",
   },
   {
     key: 8,
     name: "Page response time (ms)",
     type: "number",
+    column: "page_response",
   },
   {
     key: 9,
     name: "Page path",
     type: "string",
+    column: "path",
   },
 ];
 
-const stringOptions = ["equals", "contains", "start with", "in list"];
+const stringOptions = [
+  { name: "equals", sql: "=" },
+  { name: "contains", sql: "LIKE" },
+  { name: "start with", sql: "LIKE" },
+  { name: "in list", sql: "IN" },
+];
 
 const numberOptions = [
-  "equals",
-  "between",
-  "greater than",
-  "less than",
-  "in list",
+  { name: "equals", sql: "=" },
+  { name: "between", sql: "BETWEEN" },
+  { name: "greater than", sql: ">" },
+  { name: "less than", sql: "<" },
+  { name: "in list", sql: "IN" },
 ];
 
 function App() {
   const initialRow = {
     predicate: predicate[0],
     option: stringOptions[0],
-    value: {},
+    value: "",
   };
 
+  const [result, setResult] = React.useState("");
   const [rows, setRows] = React.useState([
     {
       predicate: predicate[0],
       option: stringOptions[0],
-      value: {},
+      value: "",
     },
   ]);
+
   const handleAddOnClick = (e) => {
     const row = {
       predicate: predicate[0],
       option: stringOptions[0],
-      value: {},
+      value: "",
     };
     const newRows = [...rows, row];
     setRows(newRows);
   };
+
   const handleResetOnClick = () => {
     setRows([initialRow]);
+    setResult("");
+  };
+
+  const handleOnSearch = () => {
+    let result = "";
+    result += "SELECT * FROM session ";
+    result += "WHERE ";
+
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i].option.name === "contains") {
+        result += `${rows[i].predicate.column} ${rows[i].option.sql} '%${rows[i].value}%'`;
+      } else if (rows[i].option.name === "start with") {
+        result += `${rows[i].predicate.column} ${rows[i].option.sql} '${rows[i].value}%'`;
+      } else {
+        result += `${rows[i].predicate.column} ${rows[i].option.sql} '${rows[i].value}'`;
+      }
+      if (i !== rows.length - 1) result += " AND ";
+    }
+    setResult(result);
   };
 
   const deletRow = (i) => {
@@ -97,11 +133,10 @@ function App() {
   };
 
   const editRow = (i, row) => {
-    console.log("editRow value: ", row);
-    console.log("editRow index: ", i);
+    console.log("row: ", row);
 
     const newRows = [...rows];
-    newRows[i] = row;
+    newRows[i] = { ...row };
     setRows(newRows);
   };
 
@@ -119,15 +154,15 @@ function App() {
         ))}
         <div className="btns-wrapper">
           <button onClick={handleAddOnClick}>And</button>
-
           <div className="search-btns">
-            <button>
-              <i class="fas fa-search"></i>
+            <button onClick={handleOnSearch}>
+              <i className="fas fa-search"></i>
               <span className="search-text">Search</span>
             </button>
             <button onClick={handleResetOnClick}>Reset</button>
           </div>
         </div>
+        <div>result:{result}</div>
       </div>
     </div>
   );
@@ -139,26 +174,41 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
   );
   const [selectedOption, setSelectedOption] = React.useState(stringOptions[0]);
 
-  const resetOperations = () => {
-    setSelectedOption(stringOptions[0]);
-  };
+  const [value, setValue] = React.useState("");
 
   const handlePredicateOnChange = (e) => {
     const selected = predicate.find((item) => item.key === +e.target.value);
     setSelectedPredicate(selected);
-    // resetOperations();
     const row = {
-      predicate: selectedPredicate,
+      predicate: selected,
       option: selectedOption,
+      value: value,
     };
 
     onRowEdit(row);
   };
   const handleOparationOnChange = (e) => {
-    setSelectedOption(e.target.value);
+    const options =
+      selectedPredicate.type === "number" ? numberOptions : stringOptions;
+
+    const selected = options.find((item) => item.name === e.target.value);
+
+    setSelectedOption(selected);
+    const row = {
+      predicate: selectedPredicate,
+      option: selected,
+      value: value,
+    };
+
+    onRowEdit(row);
+  };
+
+  const handleInputOnChange = (e) => {
+    setValue(e.target.value);
     const row = {
       predicate: selectedPredicate,
       option: selectedOption,
+      value: e.target.value,
     };
 
     onRowEdit(row);
@@ -167,11 +217,11 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
     return initial;
   };
 
-  var checkmark = "\u2715";
+  var deleteSign = "\u2715";
   return (
     <div className="row">
-      <div className="deleteBtn auto" onClick={() => onRowDelete()}>
-        {checkmark}
+      <div className="deleteBtn" onClick={() => onRowDelete()}>
+        {deleteSign}
       </div>
       <select
         className={getClassName("form-control")}
@@ -190,14 +240,14 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
       >
         {selectedPredicate.type === "number" &&
           numberOptions.map((item, index) => (
-            <option key={index} value={item}>
-              {item}
+            <option key={index} value={item.name}>
+              {item.name}
             </option>
           ))}
         {selectedPredicate.type === "string" &&
           stringOptions.map((item, index) => (
-            <option key={index} value={item}>
-              {item}
+            <option key={index} value={item.name}>
+              {item.name}
             </option>
           ))}
       </select>
@@ -225,7 +275,7 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
           className="form-control md"
           type="text"
           placeholder="website.com"
-          onChange={(e) => null}
+          onChange={(e) => handleInputOnChange(e)}
           required
         />
       )}
