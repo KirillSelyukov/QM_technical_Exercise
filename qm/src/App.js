@@ -9,23 +9,15 @@ function App() {
     predicate: predicate[0],
     option: stringOptions[0],
     value: "",
+    betweenValue1: "",
+    betweenValue2: "",
   };
 
   const [result, setResult] = React.useState("");
-  const [rows, setRows] = React.useState([
-    {
-      predicate: predicate[0],
-      option: stringOptions[0],
-      value: "",
-    },
-  ]);
+  const [rows, setRows] = React.useState([initialRow]);
 
   const handleAddOnClick = (e) => {
-    const row = {
-      predicate: predicate[0],
-      option: stringOptions[0],
-      value: "",
-    };
+    const row = initialRow;
     const newRows = [...rows, row];
     setRows(newRows);
   };
@@ -51,6 +43,7 @@ function App() {
         }
       } else {
         if (rows[i].option.name === "between") {
+          result += `${rows[i].predicate.column} ${rows[i].option.sql} ${rows[i].betweenValue1} AND ${rows[i].betweenValue2}`;
         } else if (rows[i].option.name === "in list") {
           result += `${rows[i].predicate.column} ${rows[i].option.sql} (${rows[i].value})`;
         }
@@ -140,6 +133,8 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
   );
   const [selectedOption, setSelectedOption] = React.useState(stringOptions[0]);
   const [value, setValue] = React.useState("");
+  const [betweenValue1, setBetweenValue1] = React.useState("");
+  const [betweenValue2, setBetweenValue2] = React.useState("");
 
   const handlePredicateOnChange = (e) => {
     const selected = predicate.find((item) => item.key === +e.target.value);
@@ -179,6 +174,32 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
     onRowEdit(row);
   };
 
+  const handleFirstInputOnChange = (e) => {
+    setBetweenValue1(e.target.value);
+    const row = {
+      predicate: selectedPredicate,
+      option: selectedOption,
+      value: "",
+      betweenValue1: e.target.value,
+      betweenValue2: betweenValue2,
+    };
+
+    onRowEdit(row);
+  };
+
+  const handleSecondInputOnChange = (e) => {
+    setBetweenValue2(e.target.value);
+    const row = {
+      predicate: selectedPredicate,
+      option: selectedOption,
+      value: "",
+      betweenValue1: betweenValue1,
+      betweenValue2: e.target.value,
+    };
+
+    onRowEdit(row);
+  };
+
   var deleteSign = "\u2715";
   return (
     <div className="row">
@@ -213,7 +234,7 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
             className="form-control xsm"
             type="number"
             placeholder="0"
-            onChange={(e) => null}
+            onChange={(e) => handleFirstInputOnChange(e)}
             required
           />
           <span className="span">and</span>
@@ -221,7 +242,7 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
             className="form-control xsm"
             type="number"
             placeholder="0"
-            onChange={(e) => null}
+            onChange={(e) => handleSecondInputOnChange(e)}
             required
           />
         </>
