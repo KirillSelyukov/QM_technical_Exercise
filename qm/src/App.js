@@ -106,7 +106,7 @@ export const ResetBtn = ({ onClick }) => {
 
 export const Result = ({ value }) => {
   return (
-    <div className="result">
+    <div className="result animated">
       {!value && (
         <span className="resultPlaceHolder">
           Your Generated SQL Statement goes here:
