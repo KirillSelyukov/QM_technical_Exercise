@@ -90,7 +90,7 @@ button:focus {
 }
 
 button:active {
-  transform: scale(0.99);
+  transform: scale(0.8);
 }
 
 select {
@@ -130,18 +130,20 @@ input {
   width: auto;
 }
 
-span {
+.span {
   border: 1px solid #ced4da;
   padding: 5px 5px 5px 10px;
   margin: 0 5px;
   font-size: 14px;
+  border-radius: 3px;
+  background-color: #ced4da;
 }
 
 .result {
   text-align: center;
   color: rgba(0, 0, 0);
   padding: 3em 1em;
-  font-size: 10px;
+  font-size: 20px;
   border: 1px solid #ced4da;
   cursor: pointer;
   border-radius: 0.3em;
