@@ -1,4 +1,4 @@
-# Required UI
+# Required UI. This link describe how app should looks like
 https://projects.invisionapp.com/share/F5VLVND7QRP#/screens/401097006
 
 
