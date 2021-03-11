@@ -1,19 +1,19 @@
-import React from "react";
+import React from 'react';
 
-import "./App.css";
+import './App.css';
 
-import { predicate, stringOptions, numberOptions } from "./models";
+import { predicate, stringOptions, numberOptions } from './models';
 
 function App() {
   const initialRow = {
     predicate: predicate[0],
     option: stringOptions[0],
-    value: "",
-    betweenValue1: "",
-    betweenValue2: "",
+    value: '',
+    betweenValue1: '',
+    betweenValue2: '',
   };
 
-  const [result, setResult] = React.useState("");
+  const [result, setResult] = React.useState('');
   const [rows, setRows] = React.useState([initialRow]);
 
   const handleAddOnClick = (e) => {
@@ -23,35 +23,38 @@ function App() {
   };
 
   const handleResetOnClick = () => {
+    setRows([]);
+    setResult('');
     setRows([initialRow]);
-    setResult("");
   };
 
   const handleOnSearch = () => {
-    let result = "";
-    result += "SELECT * FROM session ";
-    result += "WHERE ";
-
-    for (let i = 0; i < rows.length; i++) {
-      if (rows[i].predicate.type === "string") {
-        if (rows[i].option.name === "contains") {
-          result += `${rows[i].predicate.column} ${rows[i].option.sql} '%${rows[i].value}%'`;
-        } else if (rows[i].option.name === "start with") {
-          result += `${rows[i].predicate.column} ${rows[i].option.sql} '${rows[i].value}%'`;
+    let sql = rows.reduce((result, el) => {
+      if (el.predicate.type === 'string') {
+        if (el.option.name === 'contains') {
+          result += `${el.predicate.column} ${el.option.sql} '%${el.value}%'`;
+        } else if (el.option.name === 'start with') {
+          result += `${el.predicate.column} ${el.option.sql} '${el.value}%'`;
         } else {
-          result += `${rows[i].predicate.column} ${rows[i].option.sql} '${rows[i].value}'`;
+          result += `${el.predicate.column} ${el.option.sql} '${el.value}'`;
         }
       } else {
-        if (rows[i].option.name === "between") {
-          result += `${rows[i].predicate.column} ${rows[i].option.sql} ${rows[i].betweenValue1} AND ${rows[i].betweenValue2}`;
-        } else if (rows[i].option.name === "in list") {
-          result += `${rows[i].predicate.column} ${rows[i].option.sql} (${rows[i].value})`;
+        if (el.option.name === 'between') {
+          result += `${el.predicate.column} ${el.option.sql} ${el.betweenValue1} AND ${el.betweenValue2}`;
+        } else if (el.option.name === 'in list') {
+          result += `${el.predicate.column} ${el.option.sql} (${el.value})`;
         }
       }
 
-      if (i !== rows.length - 1) result += " AND ";
-    }
-    setResult(result);
+      result += ' AND ';
+      return result;
+    }, 'SELECT * FROM session WHERE ');
+
+    const withoutAnd = sql.length - 5;
+
+    sql = sql.substr(0, withoutAnd);
+
+    setResult(sql);
   };
 
   const deletRow = (i) => {
@@ -123,18 +126,19 @@ export const Rows = ({ rows, onEdit, onDelete }) => {
       key={index}
       onRowDelete={() => onDelete(index)}
       onRowEdit={(row) => onEdit(index, row)}
+      row={item}
     />
   ));
 };
 
-export const Row = ({ onRowDelete, onRowEdit }) => {
+export const Row = ({ onRowDelete, onRowEdit, row }) => {
   const [selectedPredicate, setSelectedPredicate] = React.useState(
-    predicate[0]
+    row.predicate
   );
-  const [selectedOption, setSelectedOption] = React.useState(stringOptions[0]);
-  const [value, setValue] = React.useState("");
-  const [betweenValue1, setBetweenValue1] = React.useState("");
-  const [betweenValue2, setBetweenValue2] = React.useState("");
+  const [selectedOption, setSelectedOption] = React.useState(row.option);
+  const [value, setValue] = React.useState('');
+  const [betweenValue1, setBetweenValue1] = React.useState('');
+  const [betweenValue2, setBetweenValue2] = React.useState('');
 
   const handlePredicateOnChange = (e) => {
     const selected = predicate.find((item) => item.key === +e.target.value);
@@ -149,7 +153,7 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
   };
   const handleOparationOnChange = (e) => {
     const options =
-      selectedPredicate.type === "number" ? numberOptions : stringOptions;
+      selectedPredicate.type === 'number' ? numberOptions : stringOptions;
 
     const selected = options.find((item) => item.name === e.target.value);
 
@@ -179,7 +183,7 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
     const row = {
       predicate: selectedPredicate,
       option: selectedOption,
-      value: "",
+      value: '',
       betweenValue1: e.target.value,
       betweenValue2: betweenValue2,
     };
@@ -192,7 +196,7 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
     const row = {
       predicate: selectedPredicate,
       option: selectedOption,
-      value: "",
+      value: '',
       betweenValue1: betweenValue1,
       betweenValue2: e.target.value,
     };
@@ -200,35 +204,40 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
     onRowEdit(row);
   };
 
-  var deleteSign = "\u2715";
+  var deleteSign = '\u2715';
+
   return (
     <div className="row">
       <div className="deleteBtn" onClick={() => onRowDelete()}>
         {deleteSign}
       </div>
-      <select className="form-control" onChange={handlePredicateOnChange}>
+      <select
+        className="form-control"
+        onChange={handlePredicateOnChange}
+        value={selectedPredicate.key}
+      >
         {predicate.map((item, index) => (
           <option key={index} value={item.key}>
             {item.name}
           </option>
         ))}
       </select>
-      {selectedOption.name === "between" && <span className="span">is</span>}
+      {selectedOption.name === 'between' && <span className="span">is</span>}
       <select className="form-control" onChange={handleOparationOnChange}>
-        {selectedPredicate.type === "number" &&
+        {selectedPredicate.type === 'number' &&
           numberOptions.map((item, index) => (
             <option key={index} value={item.name}>
               {item.name}
             </option>
           ))}
-        {selectedPredicate.type === "string" &&
+        {selectedPredicate.type === 'string' &&
           stringOptions.map((item, index) => (
             <option key={index} value={item.name}>
               {item.name}
             </option>
           ))}
       </select>
-      {selectedOption.name === "between" && (
+      {selectedOption.name === 'between' && (
         <>
           <input
             className="form-control xsm"
@@ -247,7 +256,7 @@ export const Row = ({ onRowDelete, onRowEdit }) => {
           />
         </>
       )}
-      {selectedOption.name !== "between" && (
+      {selectedOption.name !== 'between' && (
         <input
           className="form-control md"
           type="text"
